@@ -9,6 +9,8 @@ const humeursUserRoute = require('./routes/humeursUser');
 
 // Charger les variables d'environnement
 dotenv.config();
+console.log(process.env.MONGODB_URI);  // Cela devrait afficher l'URL de MongoDB si elle est définie correctement
+
 
 // Initialisation de l'application
 const app = express();
