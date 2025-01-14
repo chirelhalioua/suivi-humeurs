@@ -16,8 +16,10 @@ console.log(process.env.MONGODB_URI);  // Cela devrait afficher l'URL de MongoDB
 const app = express();
 
 // Middleware
-app.use(cors()); // Permettre les requêtes cross-origin
-app.use(express.json()); // Parse les requêtes JSON
+app.use(cors({
+  origin: 'https://v0-les-humeurs-a-la-funes-r6iajjhqxy3.vercel.app/', //
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Liste des méthodes autorisées
+}));app.use(express.json()); // Parse les requêtes JSON
 app.use(express.urlencoded({ extended: true })); // Parse les données URL-encoded
 
 // Connexion à MongoDB
