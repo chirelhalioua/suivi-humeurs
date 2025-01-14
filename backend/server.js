@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 // Connexion à MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(mongodb+srv://Chirel:iBUeOWrY4qkz2SFb@cluster0.4fwgh.mongodb.net/humeurs_funes?retryWrites=true&w=majority);
     console.log('MongoDB connecté');
   } catch (error) {
     console.error('Erreur de connexion à MongoDB', error);
