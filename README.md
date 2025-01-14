@@ -117,7 +117,7 @@ Hébergez votre frontend sur [Vercel](https://vercel.com/), [Netlify](https://ww
 ---
 
 ## Technologies Utilisées
-- **Frontend** : Vue.js (Vite)
+- **Frontend** : Nuxt.js basé sur Vue.js
 - **Backend** : Node.js, Express
 - **Base de données** : MongoDB
 
