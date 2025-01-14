@@ -51,3 +51,9 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Erreur interne du serveur.' });
 });
+
+// Route d'accueil par défaut
+app.get('/', (req, res) => {
+  res.send('Bienvenue sur le backend des humeurs à la Funès!');
+});
+
