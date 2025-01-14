@@ -3,11 +3,6 @@
     <div class="hero-section">
       <h1>Suis tes humeurs avec Louis de Funès</h1>
       <button @click="goToRegister">S'inscrire</button>
-
-      <!-- Flèche vers le bas -->
-      <div class="scroll-down" @click="scrollToConcept">
-        <i class="fas fa-chevron-down"></i>
-      </div>
     </div>
 
     <!-- Section Concept -->
