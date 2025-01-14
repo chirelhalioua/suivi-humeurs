@@ -26,7 +26,6 @@ app.use(express.urlencoded({ extended: true })); // Parse les données URL-encod
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI, { // Utilisation de la variable d'environnement pour la chaîne de connexion
-      useNewUrlParser: true,
     });
     console.log('MongoDB connecté');
   } catch (error) {
