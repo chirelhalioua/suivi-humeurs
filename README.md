@@ -1,6 +1,6 @@
 # Projet de Suivi des Humeurs
 
-Ce projet est une application web permettant de suivre les humeurs journalières et hebdomadaires des utilisateurs. Elle est constituée d'un frontend (Vue.js), d'un backend (Node.js/Express) et utilise MongoDB comme base de données.
+Ce projet est une application web permettant de suivre les humeurs journalières et hebdomadaires des utilisateurs. Elle est constituée d'un frontend (Nuxt.js), d'un backend (Node.js/Express) et utilise MongoDB comme base de données.
 
 ## Fonctionnalités
 - Suivi des humeurs matin et soir pour chaque jour de la semaine.
