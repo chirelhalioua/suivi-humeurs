@@ -5,8 +5,7 @@ const cors = require('cors');
 const humeursRoutes = require('./routes/humeursRoutes');
 const listEndpoints = require('express-list-endpoints');
 const authRoutes = require('./routes/authRoutes');
-const humeursUserRoute = require('./routes/humeursUser'); // 
-
+const humeursUserRoute = require('./routes/humeursUser'); 
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -16,27 +15,26 @@ const app = express();
 
 // Middleware
 app.use(cors());
-// Utiliser express.json() uniquement pour les POST, PUT, PATCH
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Connexion à MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connexion à MongoDB réussie');
-}).catch((err) => {
-  console.error('Erreur de connexion à MongoDB :', err);
-});
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('MongoDB connecté');
+  } catch (error) {
+    console.error('Erreur de connexion à MongoDB', error);
+    process.exit(1);
+  }
+};
+
+connectDB();  // Appel de la fonction pour connecter la base de données
 
 // Définir les routes
 app.use('/api/auth', authRoutes);
-app.use('/api', humeursUserRoute);  // Cette ligne est correcte pour votre route /api
-// Route pour obtenir une humeur par son ID
-app.use('/api/humeurs', require('./routes/humeursRoutes'));
-app.use('/api/humeurs', humeursRoutes);  // On utilise ici le préfixe '/api/humeurs' 
-
+app.use('/api', humeursUserRoute); 
+app.use('/api/humeurs', humeursRoutes);
 
 // Afficher toutes les routes disponibles
 console.log('Routes disponibles :');
@@ -53,4 +51,3 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Erreur interne du serveur.' });
 });
-
