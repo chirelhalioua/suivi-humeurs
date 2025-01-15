@@ -36,8 +36,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios'; // Importation de axios pour faire des requêtes HTTP
+import { useNuxtApp } from '#app'; // Importation de useNuxtApp pour accéder à l'instance de Nuxt
 
+const { $axios } = useNuxtApp();
 // Définir les données du formulaire
 const nom = ref('');
 const email = ref('');
