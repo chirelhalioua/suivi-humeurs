@@ -28,7 +28,10 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import { useNuxtApp } from '#app'; // Importation de useNuxtApp pour accéder à l'instance de Nuxt
+
+const { $axios } = useNuxtApp();
+  
 import { useRouter } from 'vue-router'; // Importation de useRouter
 
 // Définition des variables réactives
