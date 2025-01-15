@@ -55,6 +55,8 @@
 import { ref, onMounted } from "vue";
 import { useNuxtApp } from '#app'; // Importation de useNuxtApp pour accéder à l'instance de Nuxt
 
+  axios.defaults.baseURL = 'https://suivi-humeurs.onrender.com/'
+
 const { $axios } = useNuxtApp();
 const moods = ref([]); // Stockage des 4 humeurs pour l'aperçu
 
