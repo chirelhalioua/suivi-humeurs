@@ -78,8 +78,9 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import axios from 'axios';
+import { useNuxtApp } from '#app'; // Importation de useNuxtApp pour accéder à l'instance de Nuxt
 
+const { $axios } = useNuxtApp();
 // Variables et état
 const view = ref('daily');
 const selectedDay = ref(0); // L'index du jour est maintenant basé sur dimanche (0)
