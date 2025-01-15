@@ -1,3 +1,5 @@
+import { defineNuxtConfig } from 'nuxt3';
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@pinia/nuxt'],
@@ -19,4 +21,9 @@ export default defineNuxtConfig({
   },
   components: true, // Auto-import des composants
   compatibilityDate: '2025-01-06',
+
+  // Ajouter la configuration de axios ici
+  axios: {
+    baseURL: 'https://suivi-humeurs.onrender.com/api',  // Base URL de votre API
+  },
 });
