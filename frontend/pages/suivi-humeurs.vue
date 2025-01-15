@@ -99,7 +99,7 @@ const getUserDataFromToken = async () => {
   }
 
   try {
-    const response = await axios.get('http://localhost:5000/api/auth/me', {
+    const response = await axios.get('/api/auth/me', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -114,7 +114,7 @@ const getUserDataFromToken = async () => {
 // Fonction pour récupérer les titres des humeurs par ID
 const getMoodById = async (humeurId) => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/humeurs/${humeurId}`);
+    const response = await axios.get(`/api/humeurs/${humeurId}`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération du titre de l\'humeur :', error);
@@ -139,7 +139,7 @@ const fetchMoodData = async () => {
   }
 
   try {
-    const response = await axios.get(`http://localhost:5000/api/humeurs_utilisateurs/${user._id}`, {
+    const response = await axios.get(`/api/humeurs_utilisateurs/${user._id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
