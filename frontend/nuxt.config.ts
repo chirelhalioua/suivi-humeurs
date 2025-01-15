@@ -1,6 +1,9 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@pinia/nuxt'],
+  plugins: [
+    '~/plugins/axios.js',
+  ],
   app: {
     head: {
       title: 'Les Humeurs à la Funès',
