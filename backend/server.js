@@ -17,7 +17,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'https://v0-les-humeurs-a-la-funes-r6iajjhqxy3.vercel.app/', //
+  origin: 'https://suivi-humeurs.vercel.app/', //
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Liste des méthodes autorisées
 }));app.use(express.json()); // Parse les requêtes JSON
 app.use(express.urlencoded({ extended: true })); // Parse les données URL-encoded
