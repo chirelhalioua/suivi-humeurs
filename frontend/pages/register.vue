@@ -58,7 +58,7 @@ const registerUser = async () => {
 
   try {
     // Envoi des données d'inscription à l'API
-    const response = await axios.post('api/auth/register', {
+    const response = await axios.post('https://suivi-humeurs.onrender.com/api/auth/register', {
       name: nom.value,
       email: email.value,
       password: password.value,
