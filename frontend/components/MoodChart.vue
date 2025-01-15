@@ -26,8 +26,10 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
-import axios from 'axios';
+import { useNuxtApp } from '#app'; // Importation de useNuxtApp pour accéder à l'instance de Nuxt
 
+const { $axios } = useNuxtApp();
+  
 Chart.register(...registerables);
 
 const view = ref('daily');
