@@ -50,7 +50,7 @@ const loginUser = async () => {
   }
 
   try {
-    const response = await axios.post('/api/auth/login', {
+    const response = await axios.post('https://suivi-humeurs.onrender.com/api/auth/login', {
       email: email.value,
       password: password.value,
     });
