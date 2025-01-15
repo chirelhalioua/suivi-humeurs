@@ -59,8 +59,8 @@ const loginUser = async () => {
     messageClass.value = 'success';
 
     const { token, user } = response.data;
-localStorage.setItem('authToken', token);
-localStorage.setItem('userId', user._id);
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('userId', user._id);
 
     router.push('/profil');
   } catch (error) {
@@ -139,5 +139,60 @@ button:hover {
 
 .router-link:hover {
   text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .auth-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  form div {
+    margin-bottom: 0.8rem;
+  }
+
+  input {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  button {
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+
+  .link-container p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 400px) {
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .auth-container {
+    padding: 0.8rem;
+    margin: 0.5rem;
+  }
+
+  input {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  button {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .link-container p {
+    font-size: 0.85rem;
+  }
 }
 </style>
