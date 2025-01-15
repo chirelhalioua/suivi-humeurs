@@ -53,8 +53,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import { useNuxtApp } from '#app'; // Importation de useNuxtApp pour accéder à l'instance de Nuxt
 
+const { $axios } = useNuxtApp();
 const moods = ref([]); // Stockage des 4 humeurs pour l'aperçu
 
 // Récupérer les 4 humeurs depuis l'API
