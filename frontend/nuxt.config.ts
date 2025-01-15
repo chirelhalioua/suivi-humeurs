@@ -23,6 +23,6 @@ export default defineNuxtConfig({
   components: true,
   compatibilityDate: '2025-01-06',
   axios: {
-    baseURL: 'https://suivi-humeurs.onrender.com/api',
+    baseURL: 'https://suivi-humeurs.onrender.com',
   },
 });
