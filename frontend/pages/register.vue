@@ -2,32 +2,32 @@
   <div class="register-container">
     <h1>Inscription</h1>
     <form @submit.prevent="registerUser">
-      <div>
+      <div class="form-group">
         <label for="nom">Nom et Prénom</label>
         <input v-model="nom" type="text" id="nom" required />
       </div>
-      <div>
+      <div class="form-group">
         <label for="email">Email</label>
         <input v-model="email" type="email" id="email" required />
       </div>
-      <div>
+      <div class="form-group">
         <label for="password">Mot de passe</label>
         <input v-model="password" type="password" id="password" required />
       </div>
-      <div>
+      <div class="form-group">
         <label for="confirm-password">Confirmer le mot de passe</label>
         <input v-model="confirmPassword" type="password" id="confirm-password" required />
       </div>
       <button type="submit">S'inscrire</button>
     </form>
-    
+
     <!-- Message d'erreur ou de succès -->
     <div v-if="message" :class="messageClass">{{ message }}</div>
-    
+
     <!-- Lien vers la page de connexion si l'utilisateur a déjà un compte -->
     <div class="link-container">
       <p>
-        Vous avez déjà un compte ? 
+        Vous avez déjà un compte ?
         <router-link to="/login">Se connecter ici</router-link>
       </p>
     </div>
@@ -36,10 +36,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useNuxtApp } from '#app'; // Importation de useNuxtApp pour accéder à l'instance de Nuxt
+import { useNuxtApp } from '#app';
 
 const { $axios } = useNuxtApp();
-// Définir les données du formulaire
 const nom = ref('');
 const email = ref('');
 const password = ref('');
@@ -47,9 +46,7 @@ const confirmPassword = ref('');
 const message = ref('');
 const messageClass = ref('');
 
-// Fonction pour gérer l'inscription
 const registerUser = async () => {
-  // Vérifier si les mots de passe sont identiques
   if (password.value !== confirmPassword.value) {
     message.value = "Les mots de passe ne correspondent pas!";
     messageClass.value = 'error';
@@ -57,21 +54,16 @@ const registerUser = async () => {
   }
 
   try {
-    // Envoi des données d'inscription à l'API
     const response = await axios.post('https://suivi-humeurs.onrender.com/api/auth/register', {
       name: nom.value,
       email: email.value,
       password: password.value,
     });
 
-    // Affichage du message de succès
     message.value = "Inscription réussie!";
     messageClass.value = 'success';
-
-    // Redirection ou autre action après inscription réussie
     console.log(response.data);
   } catch (error) {
-    // Affichage d'un message d'erreur plus détaillé
     if (error.response) {
       message.value = `Erreur: ${error.response.status} - ${error.response.data.message || 'Erreur du serveur'}`;
     } else if (error.request) {
@@ -85,7 +77,7 @@ const registerUser = async () => {
 </script>
 
 <style scoped>
-/* Styles du formulaire d'inscription */
+/* Styles de base */
 .register-container {
   width: 100%;
   max-width: 500px;
@@ -101,13 +93,20 @@ h1 {
   font-size: 1.8rem;
 }
 
-form div {
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
   margin-bottom: 1rem;
 }
 
 label {
   display: block;
   margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 input {
@@ -115,6 +114,7 @@ input {
   padding: 0.8rem;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-size: 1rem;
 }
 
 button {
@@ -124,7 +124,9 @@ button {
   color: white;
   border: none;
   border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
+  margin-top: 1rem;
 }
 
 button:hover {
@@ -134,11 +136,13 @@ button:hover {
 .success {
   color: green;
   text-align: center;
+  margin-top: 1rem;
 }
 
 .error {
   color: red;
   text-align: center;
+  margin-top: 1rem;
 }
 
 .link-container {
@@ -157,5 +161,42 @@ button:hover {
 
 .router-link:hover {
   text-decoration: underline;
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+  .register-container {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  input,
+  button {
+    font-size: 0.9rem;
+    padding: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-container {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  input,
+  button {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+
+  .link-container p {
+    font-size: 0.9rem;
+  }
 }
 </style>
