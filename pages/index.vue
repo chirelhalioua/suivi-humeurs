@@ -60,7 +60,7 @@ const moods = ref([]); // Stockage des 4 humeurs pour l'aperçu
 // Récupérer les 4 humeurs depuis l'API
 const fetchMoods = async () => {
   try {
-    const response = await axios.get("http://localhost:5000/api/humeurs");
+    const response = await axios.get("https://suivi-humeurs-back.onrender.com/api/humeurs");
     moods.value = response.data.slice(0, 4); // On prend les 4 premiers éléments
   } catch (error) {
     console.error("Erreur lors de la récupération des humeurs :", error);
