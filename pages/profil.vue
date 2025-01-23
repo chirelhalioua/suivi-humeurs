@@ -51,7 +51,7 @@ const fetchUserProfile = async () => {
 
   try {
     // Envoi de la requête à l'API pour récupérer le profil
-    const response = await axios.get('http://localhost:5000/api/auth/profile', {
+    const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/auth/profile', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -109,7 +109,7 @@ const deleteProfile = async () => {
 
   try {
     // Envoi de la requête à l'API pour supprimer le profil
-    const response = await axios.delete('http://localhost:5000/api/auth/profile', {
+    const response = await axios.delete('https://suivi-humeurs-back.onrender.com/api/auth/profile', {
   headers: {
     Authorization: `Bearer ${token}`, // Token JWT pour identification
   },
