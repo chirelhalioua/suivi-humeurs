@@ -119,7 +119,7 @@ const getUserDataFromToken = async () => {
   }
 
   try {
-    const response = await axios.get('http://localhost:5000/api/auth/me', {
+    const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/auth/me', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -134,7 +134,7 @@ const getUserDataFromToken = async () => {
 // Récupérer les informations des humeurs
 const getMoodById = async (humeurId) => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/humeurs/${humeurId}`);
+    const response = await axios.get(`https://suivi-humeurs-back.onrender.com/api/humeurs/${humeurId}`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des données d\'humeur :', error);
@@ -155,7 +155,7 @@ const fetchMoodData = async () => {
   if (!user) return;
 
   try {
-    const response = await axios.get(`http://localhost:5000/api/humeurs_utilisateurs/${user._id}`, {
+    const response = await axios.get(`https://suivi-humeurs-back.onrender.com/api/humeurs_utilisateurs/${user._id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
