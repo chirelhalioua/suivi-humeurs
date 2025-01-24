@@ -29,16 +29,19 @@
 
        <!-- Section Aperçu des Humeurs -->
        <div class="mood-preview-section">
-      <h2>Aperçu des Humeurs</h2>
-      <div class="mood-preview-grid">
-        <div v-for="mood in moods" :key="mood._id" class="mood-preview-card">
-          <img :src="mood.image" :alt="mood.title" />
-          <h3>{{ mood.title }}</h3>
-          <p>{{ mood.subtitle }}</p>
-          <p><strong>Film : </strong>{{ mood.film }}</p>
-        </div>
-      </div>
+  <h2>Aperçu des Humeurs</h2>
+  <div v-if="moods.length > 0" class="mood-preview-grid">
+    <div v-for="mood in moods" :key="mood._id" class="mood-preview-card">
+      <img :src="mood.image" :alt="mood.title" />
+      <h3>{{ mood.title }}</h3>
+      <p>{{ mood.subtitle }}</p>
+      <p><strong>Film : </strong>{{ mood.film }}</p>
     </div>
+  </div>
+  <div v-else>
+    <p>Aucune humeur à afficher ou problème de chargement.</p>
+  </div>
+</div>
 
       <!-- Section Démonstration -->
       <div class="demonstration">
