@@ -93,14 +93,13 @@ onMounted(fetchMoods);
 </script>
 
 <style scoped>
-/* Styles pour la page d'accueil */
 .home-page {
   text-align: center;
 }
 
 .hero-section {
   position: relative;
-  background-image: url("/background.jpg");
+  background-image: url('/background.jpg');
   background-size: cover;
   background-position: center center;
   height: 100vh;
@@ -112,10 +111,148 @@ onMounted(fetchMoods);
   text-align: center;
 }
 
-/* Styles pour la section Aperçu des Humeurs */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+/* Animation du texte h1 */
+.hero-section h1 {
+  position: relative;
+  z-index: 2;
+  font-size: 3rem;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: slideUp 1s ease-out forwards;
+}
+
+/* Définition de l'animation */
+@keyframes slideUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.hero-section button {
+  position: relative;
+  z-index: 2;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.hero-section button:hover {
+  background-color: #45a049;
+}
+
+/* Flèche vers le bas */
+.scroll-down {
+  position: absolute;
+  bottom: 30px;
+  background-color: #4CAF50;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.scroll-down:hover {
+  background-color: #45a049;
+}
+
+.scroll-down i {
+  font-size: 2rem;
+  color: white;
+}
+
+.concept-section {
+  margin: 50px 0;
+  text-align: center;
+}
+
+.concept-section h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.concept-section p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+/* Section Liste avec icônes et effet hover */
+.concept-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 0;
+}
+
+.concept-item {
+  background-color: #f1f1f1;
+  padding: 20px;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  text-align: left;
+}
+
+.concept-item i {
+  font-size: 2rem;
+  color: #4CAF50;
+  margin-right: 10px;
+}
+
+.concept-item:hover {
+  background-color: #4CAF50;
+  color: white;
+  transform: translateY(-10px);
+}
+
+.concept-item p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Sur petit écran, les éléments s'affichent verticalement et sont moins larges */
+@media (max-width: 768px) {
+  .concept-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .concept-item {
+    width: 80%; /* Réduit la largeur des éléments sur mobile */
+    margin-bottom: 15px;
+  }
+}
+
+/* Section Aperçu des Humeurs */
 .mood-preview-section {
   margin-top: 50px;
   text-align: center;
+}
+
+.mood-preview-section h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
 .mood-preview-grid {
@@ -155,10 +292,57 @@ onMounted(fetchMoods);
   margin: 0 10px 10px 10px;
 }
 
-/* Styles pour les erreurs */
-.error {
-  color: red;
-  font-size: 1.2rem;
-  margin: 20px 0;
+/* Section Démonstration */
+.demonstration {
+  margin: 2rem auto; /* Espace autour de la section */
+  padding: 1.5rem;
+  max-width: 1200px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+.demonstration h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* Conteneur de vidéo */
+.video-demo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.video-demo iframe {
+  width: 100%;
+  max-width: 800px; /* Taille maximale de la vidéo */
+  height: 450px; /* Hauteur de la vidéo */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .video-demo iframe {
+    height: 250px; /* Ajuster la hauteur de la vidéo pour les petits écrans */
+  }
+}
+
+@media (max-width: 480px) {
+  .demonstration {
+    padding: 1rem;
+  }
+
+  .demonstration h2 {
+    font-size: 1.5rem;
+  }
+
+  .video-demo iframe {
+    max-width: 100%;
+  }
+}
+
 </style>
