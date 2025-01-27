@@ -53,29 +53,17 @@ const messageClass = ref("");
 
 // Fonction pour gérer l'inscription
 const registerUser = async () => {
-  if (password.value !== confirmPassword.value) {
-    message.value = "Les mots de passe ne correspondent pas!";
-    messageClass.value = "error";
-    return;
-  }
-
   try {
-    const response = await axios.post(
-      "https://suivi-humeurs-back.onrender.com/api/auth/register",
-      {
-        name: nom.value,
-        email: email.value,
-        password: password.value,
-      }
-    );
+    const response = await axios.post('/api/auth/register', {
+      name: nom.value,
+      email: email.value,
+      password: password.value,
+    });
     message.value = "Inscription réussie!";
     messageClass.value = "success";
-    console.log(response.data);
   } catch (error) {
     if (error.response) {
-      message.value = `Erreur: ${error.response.status} - ${
-        error.response.data.message || "Erreur du serveur"
-      }`;
+      message.value = error.response.data.error || "Erreur du serveur";
     } else if (error.request) {
       message.value = "La requête n'a pas reçu de réponse";
     } else {
