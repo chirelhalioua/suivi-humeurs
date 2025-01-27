@@ -16,18 +16,23 @@
       </div>
       <div>
         <label for="confirm-password">Confirmer le mot de passe</label>
-        <input v-model="confirmPassword" type="password" id="confirm-password" required />
+        <input
+          v-model="confirmPassword"
+          type="password"
+          id="confirm-password"
+          required
+        />
       </div>
       <button type="submit">S'inscrire</button>
     </form>
-    
+
     <!-- Message d'erreur ou de succès -->
     <div v-if="message" :class="messageClass">{{ message }}</div>
-    
+
     <!-- Lien vers la page de connexion si l'utilisateur a déjà un compte -->
     <div class="link-container">
       <p>
-        Vous avez déjà un compte ? 
+        Vous avez déjà un compte ?
         <router-link to="/login">Se connecter ici</router-link>
       </p>
     </div>
@@ -35,59 +40,60 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios'; 
-const { $http } = useNuxtApp();
-
+import { ref } from "vue";
+import axios from "axios";
 
 // Définir les données du formulaire
-const nom = ref('');
-const email = ref('');
-const password = ref('');
-const confirmPassword = ref('');
-const message = ref('');
-const messageClass = ref('');
+const nom = ref("");
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const message = ref("");
+const messageClass = ref("");
 
 // Fonction pour gérer l'inscription
 const registerUser = async () => {
-  // Vérifier si les mots de passe sont identiques
   if (password.value !== confirmPassword.value) {
     message.value = "Les mots de passe ne correspondent pas!";
-    messageClass.value = 'error';
+    messageClass.value = "error";
     return;
   }
 
   try {
-    // Envoi des données d'inscription à l'API
-    const response = await axios.post('https://suivi-humeurs-back.onrender.com/api/auth/register', {
-      name: nom.value,
-      email: email.value,
-      password: password.value,
-    });
-
-    // Affichage du message de succès
+    const response = await axios.post(
+      "https://suivi-humeurs-back.onrender.com/api/auth/register",
+      {
+        name: nom.value,
+        email: email.value,
+        password: password.value,
+      }
+    );
     message.value = "Inscription réussie!";
-    messageClass.value = 'success';
-
-    // Redirection ou autre action après inscription réussie
+    messageClass.value = "success";
     console.log(response.data);
   } catch (error) {
-    // Affichage d'un message d'erreur plus détaillé
     if (error.response) {
-      message.value = `Erreur: ${error.response.status} - ${error.response.data.message || 'Erreur du serveur'}`;
+      message.value = `Erreur: ${error.response.status} - ${
+        error.response.data.message || "Erreur du serveur"
+      }`;
     } else if (error.request) {
-      message.value = 'La requête n\'a pas reçu de réponse';
+      message.value = "La requête n'a pas reçu de réponse";
     } else {
       message.value = `Erreur de configuration: ${error.message}`;
     }
-    messageClass.value = 'error';
+    messageClass.value = "error";
   }
 };
 </script>
 
 <style scoped>
-/* Styles du formulaire d'inscription */
+/* Conteneur principal */
 .register-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
@@ -100,6 +106,11 @@ const registerUser = async () => {
 h1 {
   text-align: center;
   font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+form {
+  width: 100%;
 }
 
 form div {
@@ -109,6 +120,8 @@ form div {
 label {
   display: block;
   margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #333;
 }
 
 input {
@@ -116,16 +129,24 @@ input {
   padding: 0.8rem;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-size: 1rem;
+  outline: none;
+}
+
+input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
 
 button {
   width: 100%;
   padding: 1rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 1rem;
 }
 
 button:hover {
@@ -135,16 +156,18 @@ button:hover {
 .success {
   color: green;
   text-align: center;
+  margin-top: 1rem;
 }
 
 .error {
   color: red;
   text-align: center;
+  margin-top: 1rem;
 }
 
 .link-container {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 1rem;
 }
 
 .link-container p {
@@ -152,7 +175,7 @@ button:hover {
 }
 
 .router-link {
-  color: #4CAF50;
+  color: #4caf50;
   text-decoration: none;
 }
 
@@ -160,18 +183,15 @@ button:hover {
   text-decoration: underline;
 }
 
-/* Media Queries */
+/* Responsive design */
 @media (max-width: 768px) {
   .register-container {
     padding: 1rem;
+    box-shadow: none; /* Supprime l'ombre pour un design plus simple */
   }
 
   h1 {
     font-size: 1.5rem;
-  }
-
-  form div {
-    margin-bottom: 0.8rem;
   }
 
   input {
@@ -186,6 +206,7 @@ button:hover {
 @media (max-width: 480px) {
   .register-container {
     padding: 0.8rem;
+    border-radius: 4px; /* Réduction de l'arrondi pour les petits écrans */
   }
 
   h1 {
@@ -194,10 +215,12 @@ button:hover {
 
   input {
     padding: 0.5rem;
+    font-size: 0.9rem;
   }
 
   button {
     padding: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .link-container p {
