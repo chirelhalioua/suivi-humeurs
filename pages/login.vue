@@ -12,7 +12,7 @@
       </div>
       <button type="submit">Se connecter</button>
     </form>
-    
+
     <!-- Message de confirmation ou d'erreur -->
     <div v-if="message" :class="messageClass">{{ message }}</div>
 
@@ -29,43 +29,41 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router'; // Importation de useRouter
+import { useRouter } from 'vue-router';
 
 // Définition des variables réactives
 const email = ref('');
 const password = ref('');
 const message = ref('');
 const messageClass = ref('');
-const router = useRouter(); // Utilisation de useRouter pour accéder au routeur
+const router = useRouter();
 
 // Fonction de connexion de l'utilisateur
-const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
+const loginUser = async () => {
   try {
-    // Vérifier si l'utilisateur existe
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Utilisateur non trouvé' });
-    }
+    const response = await axios.post('https://les-humeurs-a-la-funes.vercel.app/api/auth/login', {
+      email: email.value,
+      password: password.value
+    });
 
-    // Afficher le mot de passe stocké dans la base pour vérifier que tout est ok
-    console.log("Mot de passe haché stocké : ", user.password);
+    // Si la connexion est réussie, on redirige l'utilisateur
+    const { token, user } = response.data;
+    localStorage.setItem('token', token);  // Sauvegarder le token dans le localStorage
+    message.value = 'Connexion réussie';
+    messageClass.value = 'success';
 
-    // Comparer les mots de passe
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
-      console.log("Mot de passe incorrect");
-      return res.status(400).json({ message: 'Mot de passe incorrect' });
-    }
+    // Rediriger l'utilisateur vers la page d'accueil ou un autre endroit
+    router.push('/');  // Exemple : redirige vers la page d'accueil
 
-    // Créer un token JWT
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.json({ token, user });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erreur du serveur' });
+    // Gérer les erreurs
+    if (error.response && error.response.data) {
+      message.value = error.response.data.message || 'Une erreur s\'est produite.';
+    } else {
+      message.value = 'Erreur de connexion';
+    }
+    messageClass.value = 'error';
   }
 };
 </script>
