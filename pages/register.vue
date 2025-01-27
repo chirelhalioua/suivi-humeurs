@@ -54,7 +54,7 @@ const messageClass = ref("");
 // Fonction pour gérer l'inscription
 const registerUser = async () => {
   try {
-    const response = await axios.post('/api/auth/register', {
+    const response = await axios.post('https://suivi-humeurs-back.onrender.com/api/auth/register', {
       name: nom.value,
       email: email.value,
       password: password.value,
