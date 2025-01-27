@@ -53,7 +53,7 @@ const loginUser = async () => {
     messageClass.value = 'success';
 
     // Rediriger l'utilisateur vers la page d'accueil ou un autre endroit
-    router.push('/');  // Exemple : redirige vers la page d'accueil
+    router.push('/profil');  // Exemple : redirige vers la page d'accueil
 
   } catch (error) {
     console.error(error);
