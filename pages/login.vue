@@ -39,30 +39,29 @@ const messageClass = ref('');
 const router = useRouter();
 
 // Fonction de connexion de l'utilisateur
-const loginUser = async () => {
+const loginUser = async (email, password) => {  // Passer les paramètres ici
   try {
-    const response = await axios.post('https://suivi-humeurs-back.onrender.com/api/auth/login', {
-      email: email.value,
-      password: password.value
+    const response = await axios.post('https://les-humeurs-a-la-funes.vercel.app/api/auth/login', {
+      email,
+      password,
     });
 
-    // Si la connexion est réussie, on redirige l'utilisateur
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);  // Sauvegarder le token dans le localStorage
+    const { token } = response.data;
+
+    if (!token) {
+      throw new Error("Aucun token reçu");
+    }
+
+    localStorage.setItem('authToken', token); // Sauvegarder le token
+
     message.value = 'Connexion réussie';
     messageClass.value = 'success';
 
-    // Rediriger l'utilisateur vers la page d'accueil ou un autre endroit
-    router.push('/profil');  // Exemple : redirige vers la page d'accueil
-
+    router.push('/profil'); // Rediriger vers la page de profil
   } catch (error) {
     console.error(error);
-    // Gérer les erreurs
-    if (error.response && error.response.data) {
-      message.value = error.response.data.message || 'Une erreur s\'est produite.';
-    } else {
-      message.value = 'Erreur de connexion';
-    }
+
+    message.value = error.response?.data?.message || 'Erreur de connexion';
     messageClass.value = 'error';
   }
 };
