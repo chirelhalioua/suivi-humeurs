@@ -68,7 +68,7 @@ const moodStatusMessage = ref('');
 // Charger les humeurs depuis l'API
 const fetchHumeurs = async () => {
   try {
-    const response = await axios.get('https://example.com/api/humeurs'); // Remplacez par votre URL API
+    const response = await axios.get(' https://suivi-humeurs-back.onrender.com/api/humeurs'); // Remplacez par votre URL API
     humeurs.value = response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des humeurs :', error);
@@ -114,7 +114,7 @@ const saveMood = async () => {
   };
 
   try {
-    const response = await axios.post('https://example.com/api/humeurs_utilisateurs', userMoodChoice); // Remplacez par votre URL API
+    const response = await axios.post('https://suivi-humeurs-back.onrender.com/api/humeurs_utilisateurs', userMoodChoice); // Remplacez par votre URL API
 
     if (response.status === 200) {
       localStorage.setItem('userMoodChoice', JSON.stringify(userMoodChoice));
