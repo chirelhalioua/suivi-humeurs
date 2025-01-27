@@ -1,4 +1,4 @@
-<template>
+<template> 
   <div class="choose-mood">
     <h1>Choisissez votre humeur</h1>
 
@@ -131,12 +131,21 @@ const chooseMood = () => {
     return;
   }
 
+  // Met à jour selectedMoodId et vérifie si une humeur a été choisie
   selectedMoodId.value = currentMood.value._id;
-  alert('Humeur sélectionnée. Vous pouvez maintenant ajouter une description et enregistrer.');
+
+  // Vérifie si l'humeur a bien été sélectionnée
+  if (selectedMoodId.value) {
+    alert('Humeur sélectionnée. Vous pouvez maintenant ajouter une description et enregistrer.');
+  } else {
+    alert('Erreur dans la sélection de l\'humeur.');
+  }
 };
 
 const saveMood = async () => {
   const user = getUserFromLocalStorage();
+
+  // Vérifie si l'utilisateur est connecté et qu'une humeur est choisie
   if (!user || !selectedMoodId.value) {
     alert("Veuillez choisir une humeur avant d'enregistrer.");
     return;
