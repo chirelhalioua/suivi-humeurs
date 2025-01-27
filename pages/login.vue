@@ -39,11 +39,18 @@ const messageClass = ref('');
 const router = useRouter();
 
 // Fonction de connexion de l'utilisateur
-const loginUser = async (email, password) => {  // Passer les paramètres ici
+const loginUser = async () => {
+  // Validation de l'email et du mot de passe
+  if (!email.value || !password.value) {
+    message.value = 'Tous les champs doivent être remplis';
+    messageClass.value = 'error';
+    return;
+  }
+
   try {
     const response = await axios.post('https://suivi-humeurs-back.onrender.com/api/auth/login', {
-      email,
-      password,
+      email: email.value,
+      password: password.value,
     });
 
     const { token } = response.data;
@@ -61,7 +68,13 @@ const loginUser = async (email, password) => {  // Passer les paramètres ici
   } catch (error) {
     console.error(error);
 
-    message.value = error.response?.data?.message || 'Erreur de connexion';
+    // Vérification des erreurs possibles
+    if (error.response?.data?.message) {
+      message.value = error.response.data.message;
+    } else {
+      message.value = 'Erreur de connexion, veuillez réessayer';
+    }
+
     messageClass.value = 'error';
   }
 };
