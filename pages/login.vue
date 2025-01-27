@@ -39,34 +39,33 @@ const messageClass = ref('');
 const router = useRouter(); // Utilisation de useRouter pour accéder au routeur
 
 // Fonction de connexion de l'utilisateur
-const loginUser = async () => {
-  if (!email.value || !password.value) {
-    message.value = 'Veuillez remplir tous les champs.';
-    messageClass.value = 'error';
-    return;
-  }
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
   try {
-    const response = await axios.post('https://suivi-humeurs-back.onrender.com/api/auth/login', {
-      email: email.value,
-      password: password.value,
-    });
-
-    message.value = 'Connexion réussie!';
-    messageClass.value = 'success';
-
-    const { token, user } = response.data;
-localStorage.setItem('authToken', token);
-localStorage.setItem('userId', user._id);
-
-    router.push('/profil');
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      message.value = 'Email ou mot de passe incorrect';
-    } else {
-      message.value = error.response.data.message || 'Erreur lors de la connexion';
+    // Vérifier si l'utilisateur existe
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Utilisateur non trouvé' });
     }
-    messageClass.value = 'error';
+
+    // Afficher le mot de passe stocké dans la base pour vérifier que tout est ok
+    console.log("Mot de passe haché stocké : ", user.password);
+
+    // Comparer les mots de passe
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch) {
+      console.log("Mot de passe incorrect");
+      return res.status(400).json({ message: 'Mot de passe incorrect' });
+    }
+
+    // Créer un token JWT
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({ token, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur du serveur' });
   }
 };
 </script>
