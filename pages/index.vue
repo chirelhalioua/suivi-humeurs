@@ -58,6 +58,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
+const errorMessage = ref('');
 const moods = ref([]); // Stockage des 4 humeurs pour l'aperçu
 
 // Récupérer les 4 humeurs depuis l'API
