@@ -75,16 +75,9 @@ const registerUser = async () => {
 </script>
 
 <style scoped>
-/* Conteneur principal */
 .register-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+  max-width: 400px;
+  margin: 2rem auto;
   padding: 2rem;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -93,48 +86,27 @@ const registerUser = async () => {
 
 h1 {
   text-align: center;
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-}
-
-form {
-  width: 100%;
 }
 
 form div {
   margin-bottom: 1rem;
 }
 
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  color: #333;
-}
-
 input {
-  width: 100%;
+  width: 93%;
   padding: 0.8rem;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 1rem;
-  outline: none;
-}
-
-input:focus {
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
 
 button {
   width: 100%;
   padding: 1rem;
-  background-color: #4caf50;
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
 }
 
 button:hover {
@@ -144,18 +116,16 @@ button:hover {
 .success {
   color: green;
   text-align: center;
-  margin-top: 1rem;
 }
 
 .error {
   color: red;
   text-align: center;
-  margin-top: 1rem;
 }
 
 .link-container {
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 20px;
 }
 
 .link-container p {
@@ -163,56 +133,11 @@ button:hover {
 }
 
 .router-link {
-  color: #4caf50;
+  color: #4CAF50;
   text-decoration: none;
 }
 
 .router-link:hover {
   text-decoration: underline;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .register-container {
-    padding: 1rem;
-    box-shadow: none; /* Supprime l'ombre pour un design plus simple */
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  input {
-    padding: 0.6rem;
-  }
-
-  button {
-    padding: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .register-container {
-    padding: 0.8rem;
-    border-radius: 4px; /* Réduction de l'arrondi pour les petits écrans */
-  }
-
-  h1 {
-    font-size: 1.3rem;
-  }
-
-  input {
-    padding: 0.5rem;
-    font-size: 0.9rem;
-  }
-
-  button {
-    padding: 0.8rem;
-    font-size: 0.9rem;
-  }
-
-  .link-container p {
-    font-size: 0.9rem;
-  }
 }
 </style>
