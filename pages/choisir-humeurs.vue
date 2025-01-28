@@ -303,4 +303,24 @@ textarea {
   color: red;
   font-weight: bold;
 }
+
+.time-info {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.time-info p {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.time-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.time-info li {
+  font-size: 14px;
+  margin: 5px 0;
+}
 </style>
