@@ -15,21 +15,11 @@
           ◀
         </button>
 
-        <!-- Conteneur des cartes avec animation -->
-        <div class="cards-wrapper">
-          <transition-group name="card-slide" tag="div">
-            <div
-              v-for="(mood, index) in humeurs"
-              v-if="index === currentIndex"
-              :key="mood._id"
-              class="mood-card"
-            >
-              <img v-if="mood.image" :src="mood.image" :alt="mood.title" />
-              <h3>{{ mood.title }}</h3>
-              <p>{{ mood.subtitle }}</p>
-              <p><strong>Film : </strong>{{ mood.film || "Film non disponible" }}</p>
-            </div>
-          </transition-group>
+        <div class="mood-card">
+          <img v-if="currentMood" :src="currentMood.image" :alt="currentMood.title" />
+          <h3>{{ currentMood?.title || "Pas d'humeur disponible" }}</h3>
+          <p>{{ currentMood?.subtitle || "" }}</p>
+          <p><strong>Film : </strong>{{ currentMood?.film || "Film non disponible" }}</p>
         </div>
 
         <!-- Flèche droite -->
@@ -75,65 +65,105 @@ const description = ref('');
 const hasChosenMood = ref(false);
 const moodStatusMessage = ref('');
 
+// Définir l'URL de base de votre API
+const API_URL = 'https://suivi-humeurs-back.onrender.com'; // Remplacez par votre URL réelle
+
 // Charger les humeurs depuis l'API
 const fetchHumeurs = async () => {
   try {
-    const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/humeurs'); // Remplacez par votre URL API
+    const response = await axios.get(`${API_URL}/api/humeurs`);
     humeurs.value = response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des humeurs :', error);
   }
 };
 
-// Vérifier si l'utilisateur a déjà choisi une humeur
-const checkIfMoodAlreadyChosen = async () => {
-  const storedMood = JSON.parse(localStorage.getItem('userMoodChoice'));
-  const currentDate = new Date().toISOString().split('T')[0];
-
-  if (storedMood?.date === currentDate) {
-    hasChosenMood.value = true;
-    moodStatusMessage.value = "Vous avez déjà choisi votre humeur pour aujourd'hui.";
+// Récupérer l'utilisateur connecté depuis localStorage
+const getUserFromLocalStorage = () => {
+  try {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  } catch (error) {
+    console.error("Erreur lors de l'accès aux données utilisateur dans le localStorage :", error);
+    return null;
   }
 };
 
-// Navigation entre les humeurs
-const prevMood = () => currentIndex.value = (currentIndex.value - 1 + humeurs.value.length) % humeurs.value.length;
-const nextMood = () => currentIndex.value = (currentIndex.value + 1) % humeurs.value.length;
+// Vérifier si l'utilisateur a déjà choisi une humeur
+const checkIfMoodAlreadyChosen = async () => {
+  const user = getUserFromLocalStorage();
 
-// Sélectionner une humeur
-const chooseMood = () => {
-  if (!currentMood.value) return;
-  selectedMoodId.value = currentMood.value._id;
-  alert('Humeur sélectionnée.');
+  if (user) {
+    const userId = user._id;
+    const currentDate = new Date().toISOString().split('T')[0];
+    const storedMood = JSON.parse(localStorage.getItem('userMoodChoice'));
+
+    if (storedMood && storedMood.userId === userId && storedMood.date === currentDate) {
+      hasChosenMood.value = true;
+      moodStatusMessage.value = "Vous avez déjà choisi votre humeur pour aujourd'hui.";
+    } else {
+      hasChosenMood.value = false;
+      moodStatusMessage.value = '';
+    }
+  }
 };
 
-// Sauvegarder l'humeur
+const currentMood = computed(() => humeurs.value[currentIndex.value]);
+
+const prevMood = () => {
+  currentIndex.value = (currentIndex.value - 1 + humeurs.value.length) % humeurs.value.length;
+};
+const nextMood = () => {
+  currentIndex.value = (currentIndex.value + 1) % humeurs.value.length;
+};
+
+const canNavigate = computed(() => humeurs.value.length > 1);
+const canChooseMood = computed(() => {
+  const currentHour = new Date().getHours();
+  return (currentHour >= 6 && currentHour < 12) || (currentHour >= 17 && currentHour < 24);
+});
+
+const chooseMood = () => {
+  if (!currentMood.value) {
+    alert('Aucune humeur sélectionnée.');
+    return;
+  }
+
+  selectedMoodId.value = currentMood.value._id;
+  alert('Humeur sélectionnée. Vous pouvez maintenant ajouter une description et enregistrer.');
+};
+
 const saveMood = async () => {
-  if (!selectedMoodId.value) {
+  const user = getUserFromLocalStorage();
+  if (!user || !selectedMoodId.value) {
     alert("Veuillez choisir une humeur avant d'enregistrer.");
     return;
   }
 
   const userMoodChoice = {
-    humeurId: selectedMoodId.value,
-    description: description.value || '',
+    userId: user._id,
     date: new Date().toISOString().split('T')[0],
+    timeOfDay: new Date().getHours() < 12 ? 'morning' : 'evening',
+    humeurId: selectedMoodId.value,
+    description: description.value || "Aucune description fournie",
   };
 
   try {
-    const response = await axios.post('https://suivi-humeurs-back.onrender.com/api/humeurs_utilisateurs', userMoodChoice); // Remplacez par votre URL API
+    const response = await axios.post(`${API_URL}/api/humeurs_utilisateurs`, userMoodChoice);
 
     if (response.status === 200) {
       localStorage.setItem('userMoodChoice', JSON.stringify(userMoodChoice));
       hasChosenMood.value = true;
-      moodStatusMessage.value = "Humeur enregistrée avec succès.";
+      moodStatusMessage.value = "Merci d'avoir enregistré votre humeur.";
+      selectedMoodId.value = null;
+      description.value = '';
+      checkIfMoodAlreadyChosen();
     }
   } catch (error) {
     console.error('Erreur lors de l\'enregistrement de l\'humeur :', error);
   }
 };
 
-// Initialisation
 onMounted(() => {
   fetchHumeurs();
   checkIfMoodAlreadyChosen();
@@ -144,79 +174,31 @@ onMounted(() => {
 .choose-mood {
   text-align: center;
   margin: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
 .moods-container {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 20px;
   margin-top: 20px;
 }
 
-.cards-wrapper {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  overflow: hidden;
-}
-
 .mood-card {
-  width: 300px;
-  height: 300px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  text-align: center;
-  padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: white;
-  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-}
-
-.mood-card img {
-  max-width: 100px;
-  max-height: 100px;
-  margin-bottom: 10px;
-}
-
-.card-slide-enter-active,
-.card-slide-leave-active {
-  transition: transform 0.5s, opacity 0.5s;
-}
-
-.card-slide-enter-from {
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.card-slide-leave-to {
-  opacity: 0;
-  transform: translateX(-100%);
-}
-
-.arrow-btn {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.arrow-btn:disabled {
-  background-color: #ddd;
-  cursor: not-allowed;
-}
-
-.warning {
-  color: red;
-  font-weight: bold;
-}
-</style>
+  background-color: #fff;
+  border: 2px solid #eee;
+  border-radius: 16px;
+  padding: 20px;
+  width: 280px;
+  height: 450px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, border-color 0.3s;
+  display: flex
