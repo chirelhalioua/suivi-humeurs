@@ -15,11 +15,21 @@
           ◀
         </button>
 
-        <div class="mood-card">
-          <img v-if="currentMood" :src="currentMood.image" :alt="currentMood.title" />
-          <h3>{{ currentMood?.title || "Pas d'humeur disponible" }}</h3>
-          <p>{{ currentMood?.subtitle || "" }}</p>
-          <p><strong>Film : </strong>{{ currentMood?.film || "Film non disponible" }}</p>
+        <!-- Conteneur des cartes avec animation -->
+        <div class="cards-wrapper">
+          <transition-group name="card-slide" tag="div">
+            <div
+              v-for="(mood, index) in humeurs"
+              v-if="index === currentIndex"
+              :key="mood._id"
+              class="mood-card"
+            >
+              <img v-if="mood.image" :src="mood.image" :alt="mood.title" />
+              <h3>{{ mood.title }}</h3>
+              <p>{{ mood.subtitle }}</p>
+              <p><strong>Film : </strong>{{ mood.film || "Film non disponible" }}</p>
+            </div>
+          </transition-group>
         </div>
 
         <!-- Flèche droite -->
@@ -68,7 +78,7 @@ const moodStatusMessage = ref('');
 // Charger les humeurs depuis l'API
 const fetchHumeurs = async () => {
   try {
-    const response = await axios.get(' https://suivi-humeurs-back.onrender.com/api/humeurs'); // Remplacez par votre URL API
+    const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/humeurs'); // Remplacez par votre URL API
     humeurs.value = response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des humeurs :', error);
@@ -85,9 +95,6 @@ const checkIfMoodAlreadyChosen = async () => {
     moodStatusMessage.value = "Vous avez déjà choisi votre humeur pour aujourd'hui.";
   }
 };
-
-// Humeur actuelle
-const currentMood = computed(() => humeurs.value[currentIndex.value]);
 
 // Navigation entre les humeurs
 const prevMood = () => currentIndex.value = (currentIndex.value - 1 + humeurs.value.length) % humeurs.value.length;
@@ -143,16 +150,55 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   margin-top: 20px;
 }
 
+.cards-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+}
+
 .mood-card {
+  width: 300px;
+  height: 300px;
   border: 2px solid #ddd;
-  padding: 20px;
   border-radius: 8px;
   text-align: center;
+  padding: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.mood-card img {
+  max-width: 100px;
+  max-height: 100px;
+  margin-bottom: 10px;
+}
+
+.card-slide-enter-active,
+.card-slide-leave-active {
+  transition: transform 0.5s, opacity 0.5s;
+}
+
+.card-slide-enter-from {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.card-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-100%);
 }
 
 .arrow-btn {
@@ -160,30 +206,13 @@ onMounted(() => {
   color: white;
   border: none;
   border-radius: 50%;
-  padding: 10px 15px;
-  cursor: pointer;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-textarea {
-  width: 100%;
-  height: 80px;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-top: 10px;
+  cursor: pointer;
+}
+
+.arrow-btn:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
 }
 
 .warning {
