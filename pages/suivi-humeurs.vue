@@ -120,12 +120,22 @@ const getUserDataFromToken = () => {
   try {
     const decoded = jwtDecode(token);
     console.log("Données utilisateur décodées :", decoded);
+    if (!decoded._id) {
+      console.error("ID utilisateur manquant dans le token");
+      return null;
+    }
     return decoded;
   } catch (error) {
     console.error("Erreur lors du décodage du token :", error);
     return null;
   }
 };
+
+// Appeler cette fonction pour vérifier
+const user = getUserDataFromToken();
+if (user) {
+  console.log("ID utilisateur récupéré :", user._id);
+}
 
 // Récupérer les informations des humeurs
 const getMoodById = async (humeurId) => {
