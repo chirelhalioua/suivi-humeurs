@@ -80,6 +80,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
+import jwtDecode from 'jwt-decode';
 
 // État
 const view = ref('daily');
@@ -118,17 +119,13 @@ const getUserDataFromToken = async () => {
     return null;
   }
 
-  try {
-    const response = await axios.get(`https://suivi-humeurs-back.onrender.com/api/humeurs_utilisateurs/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-      },
-    });
-
-    console.log('Données des humeurs récupérées:', response.data);
-    // Traitez les données ici
+    try {
+    const decodedToken = jwtDecode(token);
+    console.log('Token décodé :', decodedToken); // Ajoute ce log
+    return decodedToken.userId; // Assurez-vous que `userId` est la bonne clé dans votre token
   } catch (error) {
-    console.error('Erreur lors de la récupération des humeurs:', error);
+    console.error('Erreur lors du décodage du token :', error);
+    return null;
   }
 };
 
