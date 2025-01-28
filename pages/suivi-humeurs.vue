@@ -44,7 +44,6 @@
       <div class="weekly-mood">
         <div v-for="(day, index) in weekDates" :key="index" class="weekly-day">
           <div class="day-content">
-            <!-- Afficher le jour de la semaine et la date complète -->
             <h3>{{ days[index] }} ({{ formatDate(day) }})</h3>
             <div v-if="isPastOrToday(index)">
               <!-- Matin -->
@@ -111,6 +110,24 @@ const formatDate = (date) => {
   return new Intl.DateTimeFormat('fr-FR', options).format(date);
 };
 
+// Fonction pour récupérer les données utilisateur à partir du token
+const getUserDataFromToken = () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('Token non trouvé');
+      return null;
+    }
+
+    const decoded = jwtDecode(token); // Décoder le token JWT
+    console.log('Données utilisateur décodées :', decoded); // Vérifier le contenu du token
+    return decoded;
+  } catch (error) {
+    console.error('Erreur lors du décodage du token JWT :', error);
+    return null;
+  }
+};
+
 // Récupérer les informations des humeurs
 const getMoodById = async (humeurId) => {
   try {
@@ -131,8 +148,13 @@ const isPastOrToday = (index) => {
 
 // Récupérer les données des humeurs
 const fetchMoodData = async () => {
-  const user = await getUserDataFromToken();
-  if (!user) return;
+  const user = getUserDataFromToken(); // Récupère les données de l'utilisateur connecté
+  if (!user) {
+    console.error('Impossible de récupérer les données utilisateur');
+    return;
+  }
+
+  console.log('ID de l’utilisateur connecté :', user._id); // Affiche l’ID de l’utilisateur
 
   try {
     const response = await axios.get(`https://suivi-humeurs-back.onrender.com/api/humeurs_utilisateurs/${user._id}`, {
@@ -170,7 +192,7 @@ const fetchMoodData = async () => {
 onMounted(() => {
   selectedDay.value = new Date().getDay(); // Définit automatiquement le jour actuel
   calculateWeekDates(); // Calculer les dates de la semaine
-  fetchMoodData();
+  fetchMoodData(); // Récupérer les données des humeurs
 });
 
 // Réagir au changement de jour sélectionné
