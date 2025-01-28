@@ -29,7 +29,7 @@
       </div>
 
       <!-- Bouton pour choisir une humeur -->
-      <div class="mood-actions">
+      <div v-if="!hasChosenMood" class="mood-actions">
         <button
           @click="chooseMood"
           :disabled="!canChooseMood || hasChosenMood"
@@ -70,7 +70,6 @@ const fetchHumeurs = async () => {
   try {
     const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/humeurs');
     humeurs.value = response.data;
-    console.log('Humeurs récupérées :', humeurs.value); // Debugging
   } catch (error) {
     console.error('Erreur lors de la récupération des humeurs :', error);
   }
@@ -80,8 +79,7 @@ const fetchHumeurs = async () => {
 const getUserFromLocalStorage = () => {
   try {
     const user = localStorage.getItem('user');
-    console.log('Utilisateur récupéré depuis localStorage :', user); // Debugging
-    return user ? JSON.parse(user) : null;
+    return user ? JSON.parse(user) : null; // On vérifie si l'utilisateur est stocké
   } catch (error) {
     console.error("Erreur lors de l'accès aux données utilisateur dans le localStorage :", error);
     return null;
@@ -97,10 +95,10 @@ const checkIfMoodAlreadyChosen = async () => {
     const currentDate = new Date().toISOString().split('T')[0]; // date au format YYYY-MM-DD
     const storedMood = JSON.parse(localStorage.getItem('userMoodChoice'));
 
+    // Vérifie si une humeur est déjà enregistrée pour aujourd'hui
     if (storedMood && storedMood.userId === userId && storedMood.date === currentDate) {
       hasChosenMood.value = true;
       moodStatusMessage.value = "Vous avez déjà choisi votre humeur pour aujourd'hui.";
-      console.log('Humeur déjà choisie pour aujourd\'hui.'); // Debugging
     } else {
       hasChosenMood.value = false;
       moodStatusMessage.value = '';
@@ -134,15 +132,11 @@ const chooseMood = () => {
   }
 
   selectedMoodId.value = currentMood.value._id;
-  console.log('Humeur sélectionnée :', selectedMoodId.value); // Debugging
   alert('Humeur sélectionnée. Vous pouvez maintenant ajouter une description et enregistrer.');
 };
 
 const saveMood = async () => {
   const user = getUserFromLocalStorage();
-  console.log('Utilisateur récupéré :', user); // Debugging
-  console.log('Humeur sélectionnée :', selectedMoodId.value); // Debugging
-
   if (!user || !selectedMoodId.value) {
     alert("Veuillez choisir une humeur avant d'enregistrer.");
     return;
@@ -153,7 +147,7 @@ const saveMood = async () => {
     date: new Date().toISOString().split('T')[0],
     timeOfDay: new Date().getHours() < 12 ? 'morning' : 'evening',
     humeurId: selectedMoodId.value,
-    description: description.value || "Aucune description fournie",
+    description: description.value || "Aucune description fournie", // Description optionnelle
   };
 
   try {
@@ -166,7 +160,6 @@ const saveMood = async () => {
       selectedMoodId.value = null;
       description.value = '';
       checkIfMoodAlreadyChosen(); // Re-vérifier après l'enregistrement
-      console.log('Humeur enregistrée avec succès.'); // Debugging
     }
   } catch (error) {
     console.error('Erreur lors de l\'enregistrement de l\'humeur :', error);
@@ -175,7 +168,6 @@ const saveMood = async () => {
 
 // Initialisation
 onMounted(() => {
-  console.log('Montage du composant...');
   fetchHumeurs();
   checkIfMoodAlreadyChosen(); // Vérification dès le chargement de la page
 });
