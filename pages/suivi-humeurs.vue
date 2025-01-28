@@ -119,7 +119,7 @@ const getUserDataFromToken = async () => {
   }
 
   try {
-    const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/humeurs/:userId', {
+    const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/humeurs/${userId}', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
