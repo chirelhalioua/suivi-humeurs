@@ -112,18 +112,17 @@ const formatDate = (date) => {
 
 // Fonction pour récupérer les données utilisateur à partir du token
 const getUserDataFromToken = () => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    console.error("Token introuvable dans localStorage");
+    return null;
+  }
   try {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      console.error('Token non trouvé');
-      return null;
-    }
-
-    const decoded = jwtDecode(token); // Décoder le token JWT
-    console.log('Données utilisateur décodées :', decoded); // Vérifier le contenu du token
+    const decoded = jwtDecode(token);
+    console.log("Données utilisateur décodées :", decoded);
     return decoded;
   } catch (error) {
-    console.error('Erreur lors du décodage du token JWT :', error);
+    console.error("Erreur lors du décodage du token :", error);
     return null;
   }
 };
