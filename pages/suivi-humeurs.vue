@@ -44,6 +44,7 @@
       <div class="weekly-mood">
         <div v-for="(day, index) in weekDates" :key="index" class="weekly-day">
           <div class="day-content">
+            <!-- Afficher le jour de la semaine et la date complète -->
             <h3>{{ days[index] }} ({{ formatDate(day) }})</h3>
             <div v-if="isPastOrToday(index)">
               <!-- Matin -->
@@ -79,7 +80,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
 
 // État
 const view = ref('daily');
@@ -110,32 +110,26 @@ const formatDate = (date) => {
   return new Intl.DateTimeFormat('fr-FR', options).format(date);
 };
 
-// Fonction pour récupérer les données utilisateur à partir du token
-const getUserDataFromToken = () => {
+// Récupérer les données utilisateur à partir du token
+const getUserDataFromToken = async () => {
   const token = localStorage.getItem('authToken');
   if (!token) {
-    console.error("Token introuvable dans localStorage");
+    console.error('Aucun token trouvé. Veuillez vous reconnecter.');
     return null;
   }
+
   try {
-    const decoded = jwtDecode(token);
-    console.log("Données utilisateur décodées :", decoded);
-    if (!decoded._id) {
-      console.error("ID utilisateur manquant dans le token");
-      return null;
-    }
-    return decoded;
+    const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/auth/me', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
   } catch (error) {
-    console.error("Erreur lors du décodage du token :", error);
+    console.error('Erreur lors de la récupération des données utilisateur :', error);
     return null;
   }
 };
-
-// Appeler cette fonction pour vérifier
-const user = getUserDataFromToken();
-if (user) {
-  console.log("ID utilisateur récupéré :", user._id);
-}
 
 // Récupérer les informations des humeurs
 const getMoodById = async (humeurId) => {
@@ -157,13 +151,8 @@ const isPastOrToday = (index) => {
 
 // Récupérer les données des humeurs
 const fetchMoodData = async () => {
-  const user = getUserDataFromToken(); // Récupère les données de l'utilisateur connecté
-  if (!user) {
-    console.error('Impossible de récupérer les données utilisateur');
-    return;
-  }
-
-  console.log('ID de l’utilisateur connecté :', user._id); // Affiche l’ID de l’utilisateur
+  const user = await getUserDataFromToken();
+  if (!user) return;
 
   try {
     const response = await axios.get(`https://suivi-humeurs-back.onrender.com/api/humeurs_utilisateurs/${user._id}`, {
@@ -201,7 +190,7 @@ const fetchMoodData = async () => {
 onMounted(() => {
   selectedDay.value = new Date().getDay(); // Définit automatiquement le jour actuel
   calculateWeekDates(); // Calculer les dates de la semaine
-  fetchMoodData(); // Récupérer les données des humeurs
+  fetchMoodData();
 });
 
 // Réagir au changement de jour sélectionné
