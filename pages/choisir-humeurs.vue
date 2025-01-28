@@ -2,11 +2,6 @@
   <div class="choose-mood">
     <h1>Choisissez votre humeur</h1>
 
-    <!-- Afficher l'ID de l'utilisateur dans le template -->
-    <div v-if="user">
-      <p>ID utilisateur : {{ user._id }}</p>
-    </div>
-
     <!-- Vérifie si l'utilisateur a déjà choisi une humeur -->
     <div v-if="hasChosenMood" class="mood-status">
       <p class="warning">{{ moodStatusMessage }}</p>
@@ -67,9 +62,8 @@ const humeurs = ref([]); // Liste des humeurs
 const currentIndex = ref(0); // Index de l'humeur actuelle
 const selectedMoodId = ref(null); // ID de l'humeur sélectionnée
 const description = ref(''); // Description entrée par l'utilisateur
-const hasChosenMood = ref(false); // Statut : l'utilisateur a-t-il déjà choisi une humeur ?
+const hasChosenMood = ref(false); // Statut : l'utilisateur a-t-il déjà choisi une humeur ? 
 const moodStatusMessage = ref(''); // Message à afficher si l'humeur est déjà choisie
-const user = ref(null); // Utilisateur connecté
 
 // Charger les humeurs depuis l'API
 const fetchHumeurs = async () => {
@@ -85,29 +79,11 @@ const fetchHumeurs = async () => {
 const getUserFromLocalStorage = () => {
   try {
     const user = localStorage.getItem('user');
-    if (user) {
-      console.log("Utilisateur récupéré depuis localStorage:", JSON.parse(user));
-      user.value = JSON.parse(user); // On vérifie si l'utilisateur est stocké
-      return user.value; // On retourne l'utilisateur récupéré
-    }
-
-    const token = localStorage.getItem('token'); // Vous avez mentionné que le token est stocké
-    if (token) {
-      const userId = extractUserIdFromToken(token);
-      console.log("ID utilisateur extrait depuis le token:", userId);
-      return { _id: userId }; // Retourner un objet avec l'ID extrait
-    }
-    return null;
+    return user ? JSON.parse(user) : null; // On vérifie si l'utilisateur est stocké
   } catch (error) {
     console.error("Erreur lors de l'accès aux données utilisateur dans le localStorage :", error);
     return null;
   }
-};
-
-// Extraire l'ID utilisateur depuis le token JWT
-const extractUserIdFromToken = (token) => {
-  const payload = JSON.parse(atob(token.split('.')[1])); // Décoder le payload du token JWT
-  return payload.id; // L'ID utilisateur est généralement dans la clé 'id' du payload
 };
 
 // Vérifier si l'utilisateur a déjà choisi une humeur dans le suivi des humeurs
@@ -115,24 +91,18 @@ const checkIfMoodAlreadyChosen = async () => {
   const user = getUserFromLocalStorage();
 
   if (user) {
-    console.log("Utilisateur récupéré:", user); // Débogage pour vérifier l'utilisateur récupéré
     const userId = user._id;
     const currentDate = new Date().toISOString().split('T')[0]; // date au format YYYY-MM-DD
     const storedMood = JSON.parse(localStorage.getItem('userMoodChoice'));
 
-    // Vérifie si une humeur est déjà enregistrée pour aujourd'hui et si l'humeur est bien enregistrée pour le matin ou le soir
+    // Vérifie si une humeur est déjà enregistrée pour aujourd'hui
     if (storedMood && storedMood.userId === userId && storedMood.date === currentDate) {
-      const currentHour = new Date().getHours();
-      if ((currentHour < 12 && storedMood.timeOfDay === 'morning') || (currentHour >= 12 && storedMood.timeOfDay === 'evening')) {
-        hasChosenMood.value = true;
-        moodStatusMessage.value = `Vous avez déjà choisi votre humeur pour ${storedMood.timeOfDay === 'morning' ? 'le matin' : 'le soir'}.`;
-      }
+      hasChosenMood.value = true;
+      moodStatusMessage.value = "Vous avez déjà choisi votre humeur pour aujourd'hui.";
     } else {
       hasChosenMood.value = false;
       moodStatusMessage.value = '';
     }
-  } else {
-    console.log("Aucun utilisateur trouvé dans localStorage.");
   }
 };
 
@@ -173,11 +143,32 @@ const saveMood = async () => {
   }
 
   const currentHour = new Date().getHours();
-  const timeOfDay = currentHour < 12 ? 'morning' : 'evening';
+  const currentDate = new Date().toISOString().split('T')[0]; // Date au format YYYY-MM-DD
+
+  // Déterminer si c'est le matin ou le soir
+  let timeOfDay = '';
+  if (currentHour >= 6 && currentHour < 12) {
+    timeOfDay = 'morning'; // Matin
+  } else if (currentHour >= 17 && currentHour < 24) {
+    timeOfDay = 'evening'; // Soir
+  } else {
+    alert('Vous ne pouvez pas enregistrer votre humeur pour cette période de la journée.');
+    return;
+  }
+
+  // Vérifier si l'utilisateur a déjà choisi une humeur pour ce moment de la journée
+  const storedMood = JSON.parse(localStorage.getItem('userMoodChoice'));
+  if (storedMood && storedMood.userId === user._id && storedMood.date === currentDate) {
+    // Si l'humeur a déjà été enregistrée pour la même journée
+    if (storedMood.timeOfDay === timeOfDay) {
+      alert(`Vous avez déjà enregistré votre humeur pour ${timeOfDay === 'morning' ? 'le matin' : 'le soir'}.`);
+      return; // Ne pas permettre d'enregistrer une nouvelle humeur pour ce moment de la journée
+    }
+  }
 
   const userMoodChoice = {
     userId: user._id,
-    date: new Date().toISOString().split('T')[0],
+    date: currentDate, // Date du jour
     timeOfDay,
     humeurId: selectedMoodId.value,
     description: description.value || "Aucune description fournie", // Description optionnelle
@@ -187,7 +178,7 @@ const saveMood = async () => {
     const response = await axios.post('https://suivi-humeurs-back.onrender.com/api/humeurs_utilisateurs', userMoodChoice);
 
     if (response.status === 200) {
-      localStorage.setItem('userMoodChoice', JSON.stringify(userMoodChoice));
+      localStorage.setItem('userMoodChoice', JSON.stringify(userMoodChoice)); // Sauvegarder la décision dans le localStorage
       hasChosenMood.value = true;
       moodStatusMessage.value = `Merci d'avoir enregistré votre humeur pour ${timeOfDay === 'morning' ? 'le matin' : 'le soir'}.`;
       selectedMoodId.value = null;
