@@ -119,15 +119,16 @@ const getUserDataFromToken = async () => {
   }
 
   try {
-    const response = await axios.get('https://suivi-humeurs-back.onrender.com/api/humeurs/${userId}', {
+    const response = await axios.get(`https://suivi-humeurs-back.onrender.com/api/humeurs_utilisateurs/${userId}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
     });
-    return response.data;
+
+    console.log('Données des humeurs récupérées:', response.data);
+    // Traitez les données ici
   } catch (error) {
-    console.error('Erreur lors de la récupération des données utilisateur :', error);
-    return null;
+    console.error('Erreur lors de la récupération des humeurs:', error);
   }
 };
 
