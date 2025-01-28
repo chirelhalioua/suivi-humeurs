@@ -335,3 +335,131 @@ textarea {
   margin: 5px 0;
 }
 </style>
+
+<style scoped>
+.choose-mood {
+  text-align: center;
+  margin: 20px;
+}
+
+.moods-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.mood-card {
+  border: 4px solid #ddd;
+  border-radius: 16px;
+  padding: 20px;
+  width: 300px;
+  height: 500px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out, box-shadow 0.3s;
+  overflow: hidden;
+  position: relative;
+}
+
+.mood-card img {
+  max-width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.mood-card-enter-active, .mood-card-leave-active {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.mood-card-enter, .mood-card-leave-to {
+  transform: translateY(50px);
+  opacity: 0;
+}
+
+.arrow-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 20px 25px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.arrow-btn:hover {
+  background-color: #45a049;
+  transform: scale(1.1);
+}
+
+.arrow-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.mood-details {
+  margin-top: 20px;
+}
+
+.warning {
+  color: red;
+  font-weight: bold;
+}
+
+.time-info {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.time-info p {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.time-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.time-info li {
+  font-size: 14px;
+  margin: 5px 0;
+}
+</style>
