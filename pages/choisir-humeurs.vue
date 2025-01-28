@@ -2,6 +2,11 @@
   <div class="choose-mood">
     <h1>Choisissez votre humeur</h1>
 
+    <!-- Afficher l'ID de l'utilisateur dans le template -->
+    <div v-if="user">
+      <p>ID utilisateur : {{ user._id }}</p>
+    </div>
+
     <!-- Vérifie si l'utilisateur a déjà choisi une humeur -->
     <div v-if="hasChosenMood" class="mood-status">
       <p class="warning">{{ moodStatusMessage }}</p>
@@ -64,6 +69,7 @@ const selectedMoodId = ref(null); // ID de l'humeur sélectionnée
 const description = ref(''); // Description entrée par l'utilisateur
 const hasChosenMood = ref(false); // Statut : l'utilisateur a-t-il déjà choisi une humeur ?
 const moodStatusMessage = ref(''); // Message à afficher si l'humeur est déjà choisie
+const user = ref(null); // Utilisateur connecté
 
 // Charger les humeurs depuis l'API
 const fetchHumeurs = async () => {
@@ -79,11 +85,29 @@ const fetchHumeurs = async () => {
 const getUserFromLocalStorage = () => {
   try {
     const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null; // On vérifie si l'utilisateur est stocké
+    if (user) {
+      console.log("Utilisateur récupéré depuis localStorage:", JSON.parse(user));
+      user.value = JSON.parse(user); // On vérifie si l'utilisateur est stocké
+      return user.value; // On retourne l'utilisateur récupéré
+    }
+
+    const token = localStorage.getItem('token'); // Vous avez mentionné que le token est stocké
+    if (token) {
+      const userId = extractUserIdFromToken(token);
+      console.log("ID utilisateur extrait depuis le token:", userId);
+      return { _id: userId }; // Retourner un objet avec l'ID extrait
+    }
+    return null;
   } catch (error) {
     console.error("Erreur lors de l'accès aux données utilisateur dans le localStorage :", error);
     return null;
   }
+};
+
+// Extraire l'ID utilisateur depuis le token JWT
+const extractUserIdFromToken = (token) => {
+  const payload = JSON.parse(atob(token.split('.')[1])); // Décoder le payload du token JWT
+  return payload.id; // L'ID utilisateur est généralement dans la clé 'id' du payload
 };
 
 // Vérifier si l'utilisateur a déjà choisi une humeur dans le suivi des humeurs
@@ -91,18 +115,23 @@ const checkIfMoodAlreadyChosen = async () => {
   const user = getUserFromLocalStorage();
 
   if (user) {
+    console.log("Utilisateur récupéré:", user); // Débogage pour vérifier l'utilisateur récupéré
     const userId = user._id;
     const currentDate = new Date().toISOString().split('T')[0]; // date au format YYYY-MM-DD
     const storedMood = JSON.parse(localStorage.getItem('userMoodChoice'));
 
     // Vérifie si une humeur est déjà enregistrée pour aujourd'hui
     if (storedMood && storedMood.userId === userId && storedMood.date === currentDate) {
+      console.log("Humeur déjà choisie pour aujourd'hui.");
       hasChosenMood.value = true;
       moodStatusMessage.value = "Vous avez déjà choisi votre humeur pour aujourd'hui.";
     } else {
+      console.log("Aucune humeur enregistrée pour aujourd'hui.");
       hasChosenMood.value = false;
       moodStatusMessage.value = '';
     }
+  } else {
+    console.log("Aucun utilisateur trouvé dans localStorage.");
   }
 };
 
