@@ -111,24 +111,6 @@ const formatDate = (date) => {
   return new Intl.DateTimeFormat('fr-FR', options).format(date);
 };
 
-// Récupérer les données utilisateur à partir du token
-const getUserDataFromToken = async () => {
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-    console.error('Aucun token trouvé. Veuillez vous reconnecter.');
-    return null;
-  }
-
-    try {
-    const decodedToken = jwtDecode(token);
-    console.log('Token décodé :', decodedToken); // Ajoute ce log
-    return decodedToken.userId; // Assurez-vous que `userId` est la bonne clé dans votre token
-  } catch (error) {
-    console.error('Erreur lors du décodage du token :', error);
-    return null;
-  }
-};
-
 // Récupérer les informations des humeurs
 const getMoodById = async (humeurId) => {
   try {
