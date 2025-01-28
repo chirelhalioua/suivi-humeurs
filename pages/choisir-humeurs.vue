@@ -120,13 +120,14 @@ const checkIfMoodAlreadyChosen = async () => {
     const currentDate = new Date().toISOString().split('T')[0]; // date au format YYYY-MM-DD
     const storedMood = JSON.parse(localStorage.getItem('userMoodChoice'));
 
-    // Vérifie si une humeur est déjà enregistrée pour aujourd'hui
+    // Vérifie si une humeur est déjà enregistrée pour aujourd'hui et si l'humeur est bien enregistrée pour le matin ou le soir
     if (storedMood && storedMood.userId === userId && storedMood.date === currentDate) {
-      console.log("Humeur déjà choisie pour aujourd'hui.");
-      hasChosenMood.value = true;
-      moodStatusMessage.value = "Vous avez déjà choisi votre humeur pour aujourd'hui.";
+      const currentHour = new Date().getHours();
+      if ((currentHour < 12 && storedMood.timeOfDay === 'morning') || (currentHour >= 12 && storedMood.timeOfDay === 'evening')) {
+        hasChosenMood.value = true;
+        moodStatusMessage.value = `Vous avez déjà choisi votre humeur pour ${storedMood.timeOfDay === 'morning' ? 'le matin' : 'le soir'}.`;
+      }
     } else {
-      console.log("Aucune humeur enregistrée pour aujourd'hui.");
       hasChosenMood.value = false;
       moodStatusMessage.value = '';
     }
@@ -171,10 +172,13 @@ const saveMood = async () => {
     return;
   }
 
+  const currentHour = new Date().getHours();
+  const timeOfDay = currentHour < 12 ? 'morning' : 'evening';
+
   const userMoodChoice = {
     userId: user._id,
     date: new Date().toISOString().split('T')[0],
-    timeOfDay: new Date().getHours() < 12 ? 'morning' : 'evening',
+    timeOfDay,
     humeurId: selectedMoodId.value,
     description: description.value || "Aucune description fournie", // Description optionnelle
   };
@@ -185,7 +189,7 @@ const saveMood = async () => {
     if (response.status === 200) {
       localStorage.setItem('userMoodChoice', JSON.stringify(userMoodChoice));
       hasChosenMood.value = true;
-      moodStatusMessage.value = "Merci d'avoir enregistré votre humeur.";
+      moodStatusMessage.value = `Merci d'avoir enregistré votre humeur pour ${timeOfDay === 'morning' ? 'le matin' : 'le soir'}.`;
       selectedMoodId.value = null;
       description.value = '';
       checkIfMoodAlreadyChosen(); // Re-vérifier après l'enregistrement
