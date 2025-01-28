@@ -39,6 +39,15 @@
         </button>
       </div>
 
+      <!-- Message affiché si le bouton est désactivé (en dehors des horaires autorisés) -->
+      <div v-if="!canChooseMood" class="time-info">
+        <p>Vous pouvez choisir votre humeur :</p>
+        <ul>
+          <li>Le matin : de 6h à 12h</li>
+          <li>Le soir : de 17h à 00h</li>
+        </ul>
+      </div>
+
       <!-- Zone pour ajouter une description après avoir choisi une humeur -->
       <div v-if="selectedMoodId" class="mood-details">
         <textarea
@@ -52,6 +61,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
