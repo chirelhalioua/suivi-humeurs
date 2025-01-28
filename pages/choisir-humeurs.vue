@@ -15,12 +15,14 @@
           ◀
         </button>
 
-        <div class="mood-card">
-          <img v-if="currentMood" :src="currentMood.image" :alt="currentMood.title" />
-          <h3>{{ currentMood?.title || "Pas d'humeur disponible" }}</h3>
-          <p>{{ currentMood?.subtitle || "" }}</p>
-          <p><strong>Film : </strong>{{ currentMood?.film || "Film non disponible" }}</p>
-        </div>
+        <transition name="mood-card" mode="out-in">
+          <div key="mood-card" class="mood-card">
+            <img v-if="currentMood" :src="currentMood.image" :alt="currentMood.title" />
+            <h3>{{ currentMood?.title || "Pas d'humeur disponible" }}</h3>
+            <p>{{ currentMood?.subtitle || "" }}</p>
+            <p><strong>Film : </strong>{{ currentMood?.film || "Film non disponible" }}</p>
+          </div>
+        </transition>
 
         <!-- Flèche droite -->
         <button class="arrow-btn" @click="nextMood" :disabled="!canNavigate || hasChosenMood">
@@ -61,7 +63,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -232,8 +233,9 @@ onMounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: transform 0.3s, border-color 0.3s;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out, box-shadow 0.3s;
   overflow: hidden;
+  position: relative;
 }
 
 .mood-card img {
@@ -242,6 +244,15 @@ onMounted(() => {
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 20px;
+}
+
+.mood-card-enter-active, .mood-card-leave-active {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.mood-card-enter, .mood-card-leave-to {
+  transform: translateY(50px);
+  opacity: 0;
 }
 
 .arrow-btn {
